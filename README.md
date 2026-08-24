@@ -34,6 +34,13 @@
 
 ---
 
+> [!NOTE]
+> **This is a fork.** Upstream is [netease-youdao/LobsterAI](https://github.com/netease-youdao/LobsterAI)
+> (MIT). This fork adds a **desktop pet ("Peach")** — a sprite companion with its own
+> renderer, state/reward system, and optional MOSS-TTS voice.
+> See [Desktop Pet (Peach)](#desktop-pet-peach) for the setup that differs from upstream.
+> History was restarted at the fork point, so `git blame` does not reach upstream commits.
+
 **LobsterAI** is an all-scenario office assistant Agent built by [NetEase Youdao](https://www.youdao.com/) — the first open-source, desktop-grade Agent from a major Chinese tech company. It works around the clock to get real work done: data analysis, slide decks, video generation, document writing, web research, email, scheduled jobs, and more.
 
 Unlike chat-only assistants, LobsterAI is **desktop-grade**. Through its **Cowork mode** it connects to your files, terminal, browser, and local projects — executing tools and running commands directly in your real working environment, with every sensitive action gated behind your approval. Spin up purpose-built Agents (stock research, content writing, lesson planning…), extend it with Expert Kits, Skills, and MCP servers, and reach it from your phone via WeChat, WeCom, DingTalk, Feishu, QQ, Telegram, Discord, and more — command your computer to work anytime, anywhere.
@@ -86,8 +93,8 @@ Unlike chat-only assistants, LobsterAI is **desktop-grade**. Through its **Cowor
 ### 1. Clone & install
 
 ```bash
-git clone https://github.com/netease-youdao/LobsterAI.git
-cd LobsterAI
+git clone git@github.com:aalance/peachclaw.git
+cd peachclaw
 npm install
 ```
 
@@ -137,6 +144,44 @@ npm run build
 # ESLint check
 npm run lint
 ```
+
+## Desktop Pet (Peach)
+
+Fork-only feature. Launches a sprite companion in the bottom-right of your desktop.
+
+```bash
+npm run pet
+```
+
+Windows users can also double-click `启动桌宠.bat`. Both wrap `npm run electron:dev`
+after freeing port 5175 and provisioning the OpenClaw runtime if it's missing.
+
+> `npm run pet` is a **PowerShell script (Windows only)**. On macOS/Linux use
+> `npm run electron:dev:openclaw` for the first run, then `npm run electron:dev`.
+
+### Additional prerequisites
+
+Beyond Node 24 and npm, the pet's first launch needs:
+
+| Requirement | Why |
+|---|---|
+| **Windows Developer Mode** | The OpenClaw runtime build creates symlinks. Without it the build fails — enable under *Settings → Privacy & security → For developers*. |
+| **Network access to GitHub** | `scripts/ensure-openclaw-version.cjs` clones `github.com/openclaw/openclaw` at the pinned tag into `../openclaw`. |
+| **pnpm** | Required by the runtime build. `start-pet.ps1` runs `corepack enable` first, which normally covers it. |
+
+First launch takes **several minutes** (runtime clone + build). Later launches only
+recompile the main process, ~15–40s. The built runtime is cached in
+`vendor/openclaw-runtime/current`, which is gitignored — so **every collaborator pays
+this cost once on their own machine**.
+
+Keep the terminal window open: closing it kills the pet.
+
+### Voice (optional)
+
+The pet is silent unless a **MOSS-TTS-Nano server** is running locally on
+`127.0.0.1:18083`. It is a separate Python service, not bundled here —
+see [`third_party/moss-tts-nano/`](third_party/moss-tts-nano/README.md) for setup,
+the required patch, and the Windows install gotchas.
 
 ## Packaging & Distribution
 

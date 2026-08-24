@@ -1,0 +1,30 @@
+diff --git a/app.py b/app.py
+index 1141b62..17d0766 100644
+--- a/app.py
++++ b/app.py
+@@ -2791,7 +2791,10 @@ def _build_app(
+                 )
+ 
+             result, resolved_execution_device, resolved_cpu_threads = runtime_manager.call_with_runtime(
+-                requested_execution_device="cpu",
++                # LOCAL PATCH (LobsterAI pet): upstream pins this endpoint to the
++                # dedicated CPU runtime. "default" uses the runtime built from
++                # --device, so `python app.py --device auto` actually runs on GPU.
++                requested_execution_device="default",
+                 cpu_threads=cpu_threads,
+                 callback=_synthesize,
+             )
+@@ -2867,9 +2870,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
+         level=logging.INFO,
+     )
+ 
+-    resolved_runtime_device = "cpu"
+-    if args.device != "cpu":
+-        logging.info("CPU-only app mode: ignoring --device=%s and forcing cpu.", args.device)
++    # LOCAL PATCH (LobsterAI pet): upstream ships this demo as CPU-only and
++    # ignores --device. Honour the flag so --device auto uses CUDA when present.
++    resolved_runtime_device = args.device
++    logging.info("runtime device requested=%s", resolved_runtime_device)
+ 
+     runtime = NanoTTSService(
+         checkpoint_path=args.checkpoint_path,
