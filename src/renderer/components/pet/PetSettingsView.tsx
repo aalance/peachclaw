@@ -13,15 +13,15 @@ import {
 } from '../../../shared/tts/constants';
 import { i18nService } from '../../services/i18n';
 import {
-  convertToReferenceWavBase64,
-  dataUrlToArrayBuffer,
-} from '../../services/referenceAudio';
-import {
   DEFAULT_PET_ACTIONS,
   defaultPetAppearance,
   defaultPetState,
   petService,
 } from '../../services/pet';
+import {
+  convertToReferenceWavBase64,
+  dataUrlToArrayBuffer,
+} from '../../services/referenceAudio';
 import {
   defaultVoiceSettings,
   ttsService,

@@ -16,7 +16,11 @@ const forbiddenPatterns = [
 const alwaysConfirmPatterns = [
   /delete|remove|unlink|rmdir|rm\s/i,
   /overwrite|replace/i,
-  /send.*(email|message)|upload/i,
+  // The tool name and the serialised input are concatenated, so word order is
+  // not guaranteed: `email {"action":"send"}` puts the verb after the noun and
+  // the previous /send.*(email|message)/ never matched it — outbound mail was
+  // classified Direct and skipped confirmation entirely. Match the verb alone.
+  /\bsend\b|upload/i,
   /install|plugin/i,
   /calendar/i,
 ] as const;
