@@ -362,13 +362,17 @@ class PetService {
     return normalized;
   }
 
+  /**
+   * Record the selected built-in pack. Deliberately does NOT clear a custom
+   * upload: packs are cosmetic metadata that the renderer does not consume yet,
+   * so wiping the user's spritesheet here silently reset them to default Peach.
+   * Use clearCustomImage() when the user explicitly wants the default back.
+   */
   async selectResourcePack(packId: string): Promise<PetAppearance> {
     const current = await this.getAppearance();
     return this.setAppearance({
       ...current,
       selectedPackId: builtInPetResourcePacks.some(pack => pack.id === packId) ? packId : DEFAULT_PACK_ID,
-      customImageDataUrl: undefined,
-      customName: undefined,
     });
   }
 

@@ -234,13 +234,8 @@ const PetSettingsView: React.FC<PetSettingsViewProps> = ({
     }
   };
 
-  const handleSelectPack = async (packId: string) => {
-    const next = await petService.selectResourcePack(packId);
-    setAppearance(next);
-    setDataUrl(null);
-    await window.electron.pet.notifyAppearanceChanged().catch(() => undefined);
-    toast(i18nService.t('petApplied'));
-  };
+  // handleSelectPack removed with the built-in pack grid — see the comment in the
+  // Appearance section. petService.selectResourcePack() is kept for when packs land.
 
   const handleFile = (file: File) => {
     const reader = new FileReader();
@@ -592,24 +587,13 @@ const PetSettingsView: React.FC<PetSettingsViewProps> = ({
           <section>
             <h2 className="mb-3 text-sm font-semibold text-foreground">{i18nService.t('petSectionAppearance')}</h2>
 
-            <div className="mb-2 text-xs text-secondary">{i18nService.t('petBuiltInPacks')}</div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {petService.getResourcePacks().map((pack) => {
-                const active = !appearance.customImageDataUrl && appearance.selectedPackId === pack.id;
-                return (
-                  <button
-                    key={pack.id}
-                    type="button"
-                    onClick={() => void handleSelectPack(pack.id)}
-                    className={`rounded-xl border p-3 text-left transition-colors ${active ? 'border-primary ring-1 ring-primary' : 'border-border hover:bg-surface-raised'}`}
-                  >
-                    <div className="h-10 w-10 rounded-lg" style={{ background: pack.palette.primary }} />
-                    <div className="mt-2 text-sm font-medium text-foreground truncate">{pack.name}</div>
-                    <div className="text-[11px] text-secondary line-clamp-2">{pack.description}</div>
-                  </button>
-                );
-              })}
-            </div>
+            {/*
+              Built-in resource packs are hidden until they actually render.
+              petService.resolveSpriteSource() ignores appearance.selectedPackId
+              and resources/pets/ only ships the "peach" spritesheet, so picking a
+              pack changed the swatch highlight and nothing else. Restore this
+              block once packs have real spritesheets or palette tinting.
+            */}
 
             {/* Custom upload */}
             <div className="mt-5 rounded-xl border border-border bg-surface-raised p-4">

@@ -9926,8 +9926,12 @@ if (!gotTheLock) {
 
       tryLoadURL();
 
-      // 打开开发者工具
-      mainWindow.webContents.openDevTools();
+      // 开发者工具默认不再自动弹出（桌宠场景下只是噪音）。
+      // 需要时用 OPEN_DEVTOOLS=1 启动，例如：
+      //   cross-env OPEN_DEVTOOLS=1 npm run electron:dev
+      if (process.env.OPEN_DEVTOOLS === '1') {
+        mainWindow.webContents.openDevTools();
+      }
     } else {
       // 生产环境
       mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
